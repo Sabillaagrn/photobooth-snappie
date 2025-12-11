@@ -37,8 +37,9 @@ export default function AppRoutes() {
         </Route>
 
         {/* ========= REDIRECT ========= */}
-        <Route path="/" element={<Navigate to="/admin/login" />} />
-        <Route path="*" element={<Navigate to="/admin/login" />} />
+        <Route path="/" element={<Navigate to="/user" />} />      
+        <Route path="*" element={<Navigate to="/user" />} />
+
 
       </Routes>
     </BrowserRouter>

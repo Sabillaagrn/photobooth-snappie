@@ -1,6 +1,5 @@
-// 📌 LIST SEMUA FRAME — TABEL STYLE SNAPPIE
-
-export default function FrameList({ frames }) {
+// 📌 LIST SEMUA FRAME — TABEL STYLE SNAPPIE (FINAL)
+export default function FrameList({ frames, onDelete }) {
   return (
     <div
       className="
@@ -12,52 +11,86 @@ export default function FrameList({ frames }) {
         overflow-hidden
       "
     >
-      {/* 🏷️ Header Tabel */}
-      <div className="bg-snappiePink border-b-[2px] border-black grid grid-cols-5 font-semantic text-[13px] py-3 px-6">
-        <span>Preview</span>
-        <span>Nama Frame</span>
+      {/* Header Tabel */}
+      <div className="bg-snappiePink border-b-[2px] border-black grid grid-cols-6 font-semantic text-[13px] py-3 px-6">
+        <span>Thumbnail</span>
+        <span>Nama</span>
         <span>Jenis</span>
         <span>Harga</span>
+        <span>Preview Frame</span>
         <span>Aksi</span>
       </div>
 
-      {/* 📌 DATA FRAME DILOOP */}
+      {/* Data Loop */}
       {frames.map((frame) => (
         <div
           key={frame.id}
           className="
-            grid grid-cols-5 items-center gap-3
+            grid grid-cols-6 items-center gap-3
             font-semantic text-[12px]
             py-4 px-6
             border-b border-black/20
           "
         >
-          {/* 🖼️ PREVIEW GAMBAR FRAME */}
+          {/* 🖼 Thumbnail */}
           <img
-            src={frame.file}
+            src={frame.thumb}
             alt={frame.namaFrame}
-            className="w-[60px] h-[60px] object-cover rounded-[6px] border-[2px] border-black"
+            className="w-[55px] h-[55px] object-cover rounded-[6px] border-[2px] border-black bg-white"
           />
 
-          {/* 📝 Nama Frame */}
+          {/* Nama */}
           <span>{frame.namaFrame}</span>
 
-          {/* 🔖 BADGE STATUS PREMIUM/GRATIS */}
-          {/* — jika jenis = premium → badge merah
-              — jika gratis → badge hijau */}
-         <span className="font-semantic text-[12px] text-[#4B5563]">
-          {frame.jenis === "premium" ? "Premium" : "Gratis"}
-        </span>
+          {/* Jenis */}
+          <span className="text-[#4B5563]">
+            {frame.jenis === "premium" ? "Premium" : "Gratis"}
+          </span>
 
-
-          {/* 💰 Harga */}
+          {/* Harga */}
           <span>
             {frame.jenis === "gratis" ? "Rp 0" : `Rp ${frame.harga}.000`}
           </span>
 
-          {/* ✏️🗑️ Edit & Delete placeholder */}
+          {/* Mini preview frameByStrip */}
+          <div className="flex gap-2">
+            {frame.frameByStrip?.[1] && (
+              <img
+                src={frame.frameByStrip[1]}
+                className="w-[35px] h-[35px] border-2 border-black rounded"
+              />
+            )}
+            {frame.frameByStrip?.[3] && (
+              <img
+                src={frame.frameByStrip[3]}
+                className="w-[35px] h-[35px] border-2 border-black rounded"
+              />
+            )}
+            {frame.frameByStrip?.[4] && (
+              <img
+                src={frame.frameByStrip[4]}
+                className="w-[35px] h-[35px] border-2 border-black rounded"
+              />
+            )}
+          </div>
+
+          {/* Aksi (Edit/Delete) */}
           <div className="flex gap-3 text-[14px]">
-            ✏️ 🗑️
+            <button
+              type="button"
+              className="hover:scale-110 transition"
+              onClick={() => alert("Feature edit soon")}
+            >
+              ✏️
+            </button>
+
+            <button
+              type="button"
+              onClick={() => onDelete(frame.id)}
+              className="hover:scale-110 transition"
+            >
+              🗑️
+            </button>
           </div>
         </div>
       ))}

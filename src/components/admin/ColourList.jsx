@@ -10,18 +10,20 @@ export default function ColourList({ colours }) {
       "
     >
       {/* Header */}
-      <div className="
-        bg-snappiePink border-b-[2px] border-black
-        grid grid-cols-3 text-center
-        font-semantic text-[13px]
-        py-3 px-6
-      ">
+      <div
+        className="
+          bg-snappiePink border-b-[2px] border-black
+          grid grid-cols-3 text-center
+          font-semantic text-[13px]
+          py-3 px-6
+        "
+      >
         <span>Preview</span>
         <span>Nama Colour</span>
         <span>Hex Code</span>
       </div>
 
-      {/* Isi Data */}
+      {/* Rows */}
       {colours.map((c) => (
         <div
           key={c.id}
@@ -32,6 +34,7 @@ export default function ColourList({ colours }) {
             border-b border-black/20
           "
         >
+          {/* Preview Color */}
           <div
             className="
               w-[50px] h-[50px]

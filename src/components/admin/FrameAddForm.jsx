@@ -2,8 +2,10 @@ export default function FrameAddForm({
   namaFrame, setNamaFrame,
   jenis, setJenis,
   harga, setHarga,
-  lokasi, setLokasi,
-  setFile,
+  setThumbnail,
+  setFrame1,
+  setFrame3,
+  setFrame4,
   handleSubmit
 }) {
   return (
@@ -20,26 +22,21 @@ export default function FrameAddForm({
       "
     >
       {/* Nama Frame */}
-      <label className="text-[15px] font-medium mb-1 block">
-        Nama Frame
-      </label>
+      <label className="text-[15px] font-medium mb-1 block">Nama Frame</label>
       <input
         type="text"
         placeholder="Masukkan nama frame..."
         value={namaFrame}
         onChange={(e) => setNamaFrame(e.target.value)}
         className="
-          w-full h-[45px] 
+          w-full h-[45px]
           border-[2px] border-black rounded-lg
           px-4 mb-4
-          focus:outline-none focus:border-snappiePink
         "
       />
 
       {/* Jenis Frame */}
-      <label className="text-[15px] font-medium mb-1 block">
-        Jenis Frame
-      </label>
+      <label className="text-[15px] font-medium mb-1 block">Jenis Frame</label>
       <select
         value={jenis}
         onChange={(e) => setJenis(e.target.value)}
@@ -47,59 +44,79 @@ export default function FrameAddForm({
           w-full h-[45px] 
           border-[2px] border-black rounded-lg
           px-4 mb-4 bg-white
-          focus:outline-none focus:border-snappiePink
         "
       >
         <option value="gratis">Gratis</option>
         <option value="premium">Premium</option>
       </select>
 
-      {/* Harga jika premium */}
+      {/* Harga hanya muncul jika premium */}
       {jenis === "premium" && (
         <>
-          <label className="text-[15px] font-medium mb-1 block">
-            Harga Frame
-          </label>
+          <label className="text-[15px] font-medium mb-1 block">Harga Frame</label>
           <input
             type="number"
             value={harga}
             onChange={(e) => setHarga(e.target.value)}
             className="
-              w-full h-[45px] 
+              w-full h-[45px]
               border-[2px] border-black rounded-lg
-              px-4 mb-4 bg-white
-              focus:outline-none focus:border-snappiePink
+              px-4 mb-4
             "
-            placeholder="Masukkan harga"
+            placeholder="Masukkan harga..."
           />
         </>
       )}
 
-      {/* Lokasi Foto */}
+      {/* Thumbnail */}
       <label className="text-[15px] font-medium mb-1 block">
-        Penempatan Foto
+        Thumbnail (Icon Frame)
       </label>
-      <select
-        value={lokasi}
-        onChange={(e) => setLokasi(e.target.value)}
+      <input
+        type="file"
+        onChange={(e) => setThumbnail(e.target.files[0])}
         className="
           w-full h-[45px] 
           border-[2px] border-black rounded-lg
           px-4 mb-4 bg-white
-          focus:outline-none focus:border-snappiePink
         "
-      >
-        <option value="foto1">Foto 1</option>
-        <option value="foto2">Foto 2</option>
-      </select>
+      />
 
-      {/* Upload Gambar */}
+      {/* Frame Strip 1 */}
       <label className="text-[15px] font-medium mb-1 block">
-        Upload Gambar Frame
+        Frame Strip 1
       </label>
       <input
         type="file"
-        onChange={(e) => setFile(e.target.files[0])}
+        onChange={(e) => setFrame1(e.target.files[0])}
+        className="
+          w-full h-[45px] 
+          border-[2px] border-black rounded-lg
+          px-4 mb-4 bg-white
+        "
+      />
+
+      {/* Frame Strip 3 */}
+      <label className="text-[15px] font-medium mb-1 block">
+        Frame Strip 3
+      </label>
+      <input
+        type="file"
+        onChange={(e) => setFrame3(e.target.files[0])}
+        className="
+          w-full h-[45px] 
+          border-[2px] border-black rounded-lg
+          px-4 mb-4 bg-white
+        "
+      />
+
+      {/* Frame Strip 4 */}
+      <label className="text-[15px] font-medium mb-1 block">
+        Frame Strip 4
+      </label>
+      <input
+        type="file"
+        onChange={(e) => setFrame4(e.target.files[0])}
         className="
           w-full h-[45px] 
           border-[2px] border-black rounded-lg

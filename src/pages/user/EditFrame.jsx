@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useLocation } from "react-router-dom";
 import FramePicker from "../../components/user/FramePicker";
 import FramePreview from "../../components/user/FramePreview";
-import { FRAME_THUMBNAILS } from "../../data/frameLists";
+import { ALL_FRAMES } from "../../data/frameLists";
 
 export default function EditFrame() {
   const location = useLocation();
@@ -12,17 +12,20 @@ export default function EditFrame() {
 
   const stripCount = Math.min(photos.length, 4);
 
+  // Konversi ukuran ke pixel
   const CM = 37.79527559;
   const CONFIG = {
-    4: { width: 8.87 * CM, height: 4.90 * CM, x: 0.84 * CM, yStart: 2 * CM, gap: 0.7 * CM, frameWidth: 10.5 * CM, frameHeight: 29.7 * CM },
+    4: { width: 8.87 * CM, height: 4.9 * CM, x: 0.84 * CM, yStart: 2 * CM, gap: 0.7 * CM, frameWidth: 10.5 * CM, frameHeight: 29.7 * CM },
     3: { width: 8.87 * CM, height: 5 * CM, x: 0.85 * CM, yStart: 1.2 * CM, gap: 1.4 * CM, frameWidth: 10.5 * CM, frameHeight: 22.5 * CM },
     2: { width: 8.87 * CM, height: 9.5 * CM, x: 0.84 * CM, yStart: 4 * CM, gap: 1.5 * CM, frameWidth: 10.5 * CM, frameHeight: 29.7 * CM },
-    1: { width: 12.5 * CM, height: 8.5 * CM, x: 0.8 * CM, yStart: 1 * CM, gap: 0, frameWidth: 14 * CM, frameHeight: 10.5 * CM },
+    1: { width: 12.5 * CM, height: 8.5 * CM, x: 0.8 * CM, yStart: 1 * CM, gap: 0, frameWidth: 14 * CM, frameHeight: 10.5 * CM }
   };
 
   const SLOT = CONFIG[stripCount];
 
-  // ================= DOWNLOAD =================
+  // =====================================================
+  // HANDLE DOWNLOAD
+  // =====================================================
   const handleDownload = async () => {
     if (!selectedFrame) return alert("Pilih frame dulu!");
 
@@ -34,68 +37,71 @@ export default function EditFrame() {
     ctx.fillStyle = "#fff";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // --- draw photos ---
+    // Draw Photos
     for (let i = 0; i < stripCount; i++) {
       const img = new Image();
       img.src = photos[i];
-      await new Promise(resolve => {
+
+      await new Promise((resolve) => {
         img.onload = () => {
           const scale = Math.max(SLOT.width / img.width, SLOT.height / img.height);
-          const drawWidth = img.width * scale;
-          const drawHeight = img.height * scale;
-          const offsetX = SLOT.x + (SLOT.width - drawWidth) / 2;
-          const offsetY =
-            SLOT.yStart + i * (SLOT.height + SLOT.gap) + (SLOT.height - drawHeight) / 2;
-          ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
+          const w = img.width * scale;
+          const h = img.height * scale;
+
+          const x = SLOT.x + (SLOT.width - w) / 2;
+          const y = SLOT.yStart + i * (SLOT.height + SLOT.gap) + (SLOT.height - h) / 2;
+
+          ctx.drawImage(img, x, y, w, h);
           resolve();
         };
       });
     }
 
-    // ================= COLOR FRAME =================
-    if (selectedFrame.type === "color") {
-      ctx.strokeStyle = selectedFrame.value;
+    // Find frame data
+    const frameData = ALL_FRAMES.find(f => f.id === selectedFrame.id);
+    if (!frameData) return alert("Frame tidak ditemukan!");
+
+    // FRAME WARNA
+    if (frameData.type === "color") {
+      ctx.strokeStyle = frameData.color;
       ctx.lineWidth = 30;
       ctx.strokeRect(0, 0, SLOT.frameWidth, SLOT.frameHeight);
-
-      const link = document.createElement("a");
-      link.href = canvas.toDataURL("image/png");
-      link.download = `photobooth-color.png`;
-      link.click();
-      return;
     }
 
-    // ================= IMAGE FRAME =================
-    const frameData = FRAME_THUMBNAILS.find(f => f.id === selectedFrame.id);
-    if (!frameData) return alert("Frame tidak ditemukan!");
-    if (!frameData.isFree) return alert("Frame ini berbayar.");
+    // FRAME GAMBAR
+    if (frameData.type === "image") {
+      const frameImg = new Image();
+      frameImg.src = frameData.frameByStrip[stripCount];
 
-    const frameImg = new Image();
-    frameImg.src = frameData.frameByStrip[stripCount];
-    await new Promise(resolve => {
-      frameImg.onload = () => {
-        ctx.drawImage(frameImg, 0, 0, SLOT.frameWidth, SLOT.frameHeight);
-        resolve();
-      };
-    });
+      await new Promise((resolve) => {
+        frameImg.onload = () => {
+          ctx.drawImage(frameImg, 0, 0, SLOT.frameWidth, SLOT.frameHeight);
+          resolve();
+        };
+      });
+    }
 
+    // Download
     const link = document.createElement("a");
     link.href = canvas.toDataURL("image/png");
     link.download = `photobooth-${frameData.id}.png`;
     link.click();
   };
 
-  const handleExit = () => window.history.back();
-
+  // =====================================================
+  // RETURN UI
+  // =====================================================
   return (
     <div
       className="min-h-screen bg-[#FFF3D8] flex items-start justify-center p-20 gap-16"
       style={{
         backgroundImage: "url(/webImage/Camera.png)",
         backgroundSize: "cover",
-        backgroundPosition: "center",
+        backgroundPosition: "center"
       }}
     >
+
+      {/* PREVIEW AREA */}
       <div className="scale-75 origin-top flex flex-col items-center gap-4">
         <FramePreview
           photos={photos}
@@ -104,8 +110,10 @@ export default function EditFrame() {
         />
       </div>
 
+      {/* PICKER + BUTTONS */}
       <div className="self-start flex flex-col items-center gap-4">
         <FramePicker
+          frames={ALL_FRAMES}
           selectedFrame={selectedFrame}
           onPickFrame={setSelectedFrame}
         />
@@ -114,22 +122,20 @@ export default function EditFrame() {
           <button
             onClick={handleDownload}
             disabled={photos.length === 0}
-            className={`font-press mt-4 px-10 py-2 rounded-[15px] font-bold border-[2.5px] border-black shadow-lg transition
-              ${photos.length === 0
-                ? "bg-[#BBDA97] cursor-not-allowed"
-                : "bg-[#FFE97F] hover:scale-105"}`}
+            className="font-press mt-4 px-10 py-2 rounded-[15px] font-bold border-[2.5px] border-black shadow-lg transition bg-[#FFE97F] hover:scale-105 disabled:bg-[#BBDA97] disabled:cursor-not-allowed"
           >
             Download
           </button>
 
           <button
-            onClick={handleExit}
+            onClick={() => window.history.back()}
             className="font-press mt-4 px-10 py-2 rounded-[15px] font-bold border-[2.5px] border-black shadow-lg transition bg-[#FF9999] hover:scale-105"
           >
             Back
           </button>
         </div>
       </div>
+
     </div>
   );
 }
